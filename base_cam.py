@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 import torch
 import ttach as tta
+
 from activations_and_gradients import ActivationsAndGradients
+
 
 class BaseCAM:
     def __init__(self,
@@ -54,10 +56,7 @@ class BaseCAM:
         weighted_activations = weights[:, :, None, None] * activations  # (1, 2048, 34, 34) # 对特征加权求和
         print("weighted_activations ", weighted_activations.shape)
 
-        if eigen_smooth:
-            cam = get_2d_projection(weighted_activations)
-        else:
-            cam = weighted_activations.sum(axis=1)  # 34, 34
+        cam = weighted_activations.sum(axis=1)  # 34, 34
         return cam
 
     def forward(self, input_tensor, target_category=None, eigen_smooth=False):
@@ -83,7 +82,9 @@ class BaseCAM:
             self.model.zero_grad()
             loss = self.get_loss(output, target_category)
             loss.backward(
-                retain_graph=False)  # retain_graph如果设置为False，计算图中的中间变量在计算完后就会被释放。但是在平时的使用中这个参数默认都为False从而提高效率，和creat_graph的值一样。
+                retain_graph=True)
+            # retain_graph如果设置为False，计算图中的中间变量在backward完后就会被释放,即之后计算的时候拿不到gradient了。
+            # 但是在平时的使用中这个参数默认都为False从而提高效率，和creat_graph的值一样。
 
         # In most of the saliency attribution papers, the saliency is
         # computed with a single target layer.

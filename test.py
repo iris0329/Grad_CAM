@@ -50,11 +50,11 @@ target_category = None
 # target_category = [5, 6]
 
 # You can also pass aug_smooth=True and eigen_smooth=True, to apply smoothing.
-grayscale_cam = cam(input_tensor=input_tensor, target_category=target_category)  # b, h, c # (1, 1069, 1070)
+grayscale_cam = cam(input_tensor=input_tensor, target_category=target_category)  # (1, 1069, 1070)
 
 # In this example grayscale_cam has only one image in the batch:
-grayscale_cam = grayscale_cam[0, :]  # h, c
-visualization = show_cam_on_image(rgb_img, grayscale_cam, use_rgb=True)  # uint8
+grayscale_cam = grayscale_cam[0, :]  # h, w
+visualization = show_cam_on_image(rgb_img, grayscale_cam, use_rgb=True)  # uint8 # (1069, 1070, 3)
 
 print(visualization.shape)  # (1069, 1070, 3)
 save_img = PIL.Image.fromarray(visualization)
